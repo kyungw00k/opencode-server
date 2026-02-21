@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:opencode.ai)",
+      "WebFetch(domain:hub.docker.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:agileweboperations.com)",
+      "WebSearch",
+      "WebFetch(domain:docs.z.ai)"
+    ]
+  }
+}

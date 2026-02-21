@@ -1,0 +1,38 @@
+services:
+  opencode:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opencode-server
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    environment:
+      - TZ=${TZ:-Asia/Seoul}
+      - ZAI_API_KEY=${ZAI_API_KEY}
+      - GH_TOKEN=${GH_TOKEN}
+      - SSH_BOOTSTRAP=${SSH_BOOTSTRAP:-true}
+      - SSH_SOURCE_DIR=${SSH_SOURCE_DIR:-/home/opencode/.ssh-host}
+      - SSH_PRIVATE_KEY_NAME=${SSH_PRIVATE_KEY_NAME:-id_ed25519}
+      - SSH_ADD_GITHUB_KNOWN_HOSTS=${SSH_ADD_GITHUB_KNOWN_HOSTS:-true}
+      - GIT_USE_SSH_FOR_GITHUB=${GIT_USE_SSH_FOR_GITHUB:-true}
+      - OCX_BOOTSTRAP=${OCX_BOOTSTRAP:-true}
+      - OCX_REGISTRY_URL=${OCX_REGISTRY_URL:-https://registry.kdco.dev}
+      - OCX_REGISTRY_NAME=${OCX_REGISTRY_NAME:-kdco}
+      - OCX_BACKGROUND_COMPONENT=${OCX_BACKGROUND_COMPONENT:-kdco/background-agents}
+    volumes:
+      # Persistent OpenCode data (auth tokens, sessions, SQLite DB)
+      - ${OPENCODE_DATA_PATH}:/home/opencode/.local/share/opencode
+      # OpenCode config (opencode.json bootstrapped by entrypoint if missing)
+      - ${OPENCODE_CONFIG_PATH}:/home/opencode/.config/opencode
+      # Plugin cache - persists across container restarts to avoid re-downloading
+      - ${OPENCODE_PLUGIN_CACHE_PATH}:/home/opencode/.cache/opencode
+      # Development workspace
+      - ${OPENCODE_WORKSPACE_PATH}:/workspace
+      # Optional: mount host SSH directory (contains id_ed25519, id_ed25519.pub, known_hosts)
+      # - ${OPENCODE_SSH_PATH}:/home/opencode/.ssh-host:ro
+    ports:
+      - "${OPENCODE_PORT:-3000}:3000"
+    working_dir: /workspace
+    # Required for Playwright browser automation (shared memory)
+    shm_size: '2gb'

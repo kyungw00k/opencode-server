@@ -1,0 +1,8 @@
+# Secrets - never commit
+.env
+
+# OpenCode runtime data (auth tokens, sessions)
+data/
+
+# Build artifacts
+*.tar.gz
