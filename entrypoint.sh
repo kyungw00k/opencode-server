@@ -12,6 +12,56 @@ if [ ! -f "${CONFIG_FILE}" ]; then
   cp "${TEMPLATE}" "${CONFIG_FILE}"
 fi
 
+bootstrap_model_by_env() {
+  if [ "${MODEL_AUTO_SELECT_BY_ENV:-true}" != "true" ]; then
+    return
+  fi
+
+  if [ ! -f "${CONFIG_FILE}" ]; then
+    return
+  fi
+
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "[entrypoint] jq not found, skipping model auto selection."
+    return
+  fi
+
+  local current_model
+  local current_small_model
+  local fallback_model
+  local zai_model
+  current_model="$(jq -r '.model // ""' "${CONFIG_FILE}" 2>/dev/null || true)"
+  current_small_model="$(jq -r '.small_model // ""' "${CONFIG_FILE}" 2>/dev/null || true)"
+  fallback_model="${OPENCODE_FALLBACK_MODEL:-opencode/gpt-5-nano}"
+  zai_model="${OPENCODE_ZAI_MODEL:-z-ai/glm-4.7}"
+
+  # If ZAI key is absent, avoid using z-ai/* models and switch to free fallback.
+  if [ -z "${ZAI_API_KEY:-}" ]; then
+    if [[ "${current_model}" == z-ai/* ]] || [[ "${current_small_model}" == z-ai/* ]]; then
+      local tmp_file
+      tmp_file="$(mktemp)"
+      jq --arg model "${fallback_model}" \
+        '.model = $model | .small_model = $model' \
+        "${CONFIG_FILE}" > "${tmp_file}"
+      mv "${tmp_file}" "${CONFIG_FILE}"
+      echo "[entrypoint] ZAI_API_KEY not set, switched model to ${fallback_model}."
+    fi
+    return
+  fi
+
+  # If ZAI key exists, move managed models back to z-ai.
+  if [[ "${current_model}" == z-ai/* ]] || [[ "${current_small_model}" == z-ai/* ]] \
+    || [[ "${current_model}" == "${fallback_model}" ]] || [[ "${current_small_model}" == "${fallback_model}" ]]; then
+    local tmp_file
+    tmp_file="$(mktemp)"
+    jq --arg model "${zai_model}" \
+      '.model = $model | .small_model = $model' \
+      "${CONFIG_FILE}" > "${tmp_file}"
+    mv "${tmp_file}" "${CONFIG_FILE}"
+    echo "[entrypoint] ZAI_API_KEY detected, using model ${zai_model}."
+  fi
+}
+
 bootstrap_ssh() {
   if [ "${SSH_BOOTSTRAP:-true}" != "true" ]; then
     return
@@ -106,6 +156,7 @@ bootstrap_ocx() {
   fi
 }
 
+bootstrap_model_by_env
 bootstrap_ssh
 bootstrap_ocx
 

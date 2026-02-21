@@ -26,14 +26,24 @@
   "mcp": {
     "playwright": {
       "type": "local",
-      "command": ["npx", "@playwright/mcp@latest", "--headless", "--browser", "chrome"],
-      "enabled": true
+      "command": [
+        "npx",
+        "@playwright/mcp@0.0.68",
+        "--headless",
+        "--browser",
+        "chromium"
+      ],
+      "enabled": true,
+      "environment": {
+        "PATH": "/home/opencode/.nvm/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "PLAYWRIGHT_BROWSERS_PATH": "/home/opencode/.cache/ms-playwright"
+      }
     },
     "github": {
       "type": "local",
       "command": ["gh", "mcp-server"],
       "enabled": true,
-      "env": {
+      "environment": {
         "GH_TOKEN": "{env:GH_TOKEN}"
       }
     }

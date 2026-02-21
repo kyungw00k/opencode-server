@@ -78,12 +78,17 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
 
 # ── Node.js (LTS) via nvm ─────────────────────────────────────────────────────
 ENV NVM_DIR=/home/opencode/.nvm
+ENV NVM_SYMLINK_CURRENT=true
 RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
   && . "${NVM_DIR}/nvm.sh" \
   && nvm install --lts \
   && nvm alias default 'lts/*' \
-  && nvm use default
-ENV PATH="${NVM_DIR}/versions/node/$(ls ${NVM_DIR}/versions/node | sort -V | tail -1)/bin:${PATH}"
+  && nvm use default \
+  && NODE_BIN_DIR="$(dirname "$(nvm which default)")" \
+  && sudo ln -sf "${NODE_BIN_DIR}/node" /usr/local/bin/node \
+  && sudo ln -sf "${NODE_BIN_DIR}/npm" /usr/local/bin/npm \
+  && sudo ln -sf "${NODE_BIN_DIR}/npx" /usr/local/bin/npx
+ENV PATH="${NVM_DIR}/current/bin:${PATH}"
 
 # ── Bun ───────────────────────────────────────────────────────────────────────
 RUN curl -fsSL https://bun.sh/install | bash
@@ -98,7 +103,7 @@ ENV PATH="/home/opencode/.local/bin:${PATH}"
 
 # ── OpenCode ──────────────────────────────────────────────────────────────────
 RUN curl -fsSL https://opencode.ai/install | bash
-ENV PATH="/home/opencode/.local/bin:${PATH}"
+ENV PATH="/home/opencode/.opencode/bin:/home/opencode/.local/bin:${PATH}"
 
 # ── Playwright (install browsers) ─────────────────────────────────────────────
 RUN . "${NVM_DIR}/nvm.sh" \
