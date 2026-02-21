@@ -2,6 +2,9 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/opencode
+ENV LANG=ko_KR.UTF-8
+ENV LC_ALL=ko_KR.UTF-8
+ENV LANGUAGE=ko_KR:ko
 ENV PATH="/home/opencode/.cargo/bin:/home/opencode/.bun/bin:/usr/local/go/bin:/home/opencode/.sdkman/candidates/kotlin/current/bin:/home/opencode/.sdkman/candidates/java/current/bin:${PATH}"
 
 # ── System packages ───────────────────────────────────────────────────────────
@@ -12,6 +15,8 @@ RUN apt-get update && apt-get install -y \
     build-essential cmake pkg-config \
     # Python
     python3 python3-pip python3-venv python3-dev \
+    # Locale
+    locales \
     # JVM (for Kotlin via SDKMAN)
     openjdk-21-jdk-headless zip unzip \
     # GitHub CLI
@@ -20,8 +25,13 @@ RUN apt-get update && apt-get install -y \
     libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
     libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
     libgbm1 libasound2t64 \
+    # Fonts (Korean/CJK)
+    fonts-noto-cjk fonts-nanum \
     # Utilities
     sudo jq vim less openssh-client \
+  && sed -i 's/^# *\\(ko_KR.UTF-8 UTF-8\\)/\\1/' /etc/locale.gen \
+  && locale-gen ko_KR.UTF-8 \
+  && update-locale LANG=ko_KR.UTF-8 LC_ALL=ko_KR.UTF-8 \
   && rm -rf /var/lib/apt/lists/*
 
 # ── GitHub CLI ────────────────────────────────────────────────────────────────
@@ -32,19 +42,6 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
       > /etc/apt/sources.list.d/github-cli.list \
   && apt-get update && apt-get install -y gh \
   && rm -rf /var/lib/apt/lists/*
-
-# ── Google Chrome (amd64 only) ────────────────────────────────────────────────
-RUN ARCH="$(dpkg --print-architecture)" \
-  && if [ "${ARCH}" = "amd64" ]; then \
-       curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
-         | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
-       && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" \
-         > /etc/apt/sources.list.d/google-chrome.list \
-       && apt-get update && apt-get install -y google-chrome-stable \
-       && rm -rf /var/lib/apt/lists/*; \
-     else \
-       echo "Skipping Google Chrome install on architecture: ${ARCH}"; \
-     fi
 
 # ── Non-root user ─────────────────────────────────────────────────────────────
 # Some base images already contain UID 1000. Reuse/rename it to keep stable UID.

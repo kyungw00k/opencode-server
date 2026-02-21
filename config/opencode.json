@@ -9,8 +9,32 @@
         "apiKey": "{env:ZAI_API_KEY}"
       },
       "models": {
+        "glm-5": {
+          "name": "GLM-5"
+        },
         "glm-4.7": {
           "name": "GLM-4.7"
+        },
+        "glm-4.7-flashx": {
+          "name": "GLM-4.7-FlashX"
+        },
+        "glm-4.6": {
+          "name": "GLM-4.6"
+        },
+        "glm-4.6v": {
+          "name": "GLM-4.6V"
+        },
+        "glm-4.5": {
+          "name": "GLM-4.5"
+        },
+        "glm-4.5-air": {
+          "name": "GLM-4.5-Air"
+        },
+        "glm-4.5-airx": {
+          "name": "GLM-4.5-AirX"
+        },
+        "glm-4.5-flash": {
+          "name": "GLM-4.5-Flash"
         },
         "glm-4-plus": {
           "name": "GLM-4-Plus"
@@ -21,8 +45,8 @@
       }
     }
   },
-  "model": "z-ai/glm-4.7",
-  "small_model": "z-ai/glm-4.7",
+  "model": "z-ai/glm-4-plus",
+  "small_model": "z-ai/glm-4.5",
   "mcp": {
     "playwright": {
       "type": "local",

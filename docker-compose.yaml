@@ -7,7 +7,13 @@ services:
     stdin_open: true
     environment:
       - TZ=${TZ:-Asia/Seoul}
+      - LANG=${LANG:-ko_KR.UTF-8}
+      - LC_ALL=${LC_ALL:-ko_KR.UTF-8}
       - ZAI_API_KEY=${ZAI_API_KEY}
+      - OPENCODE_ZAI_MODEL=${OPENCODE_ZAI_MODEL:-z-ai/glm-4-plus}
+      - OPENCODE_ZAI_SMALL_MODEL=${OPENCODE_ZAI_SMALL_MODEL:-z-ai/glm-4.5}
+      - OPENCODE_FALLBACK_MODEL=${OPENCODE_FALLBACK_MODEL:-opencode/gpt-5-nano}
+      - OPENCODE_FALLBACK_SMALL_MODEL=${OPENCODE_FALLBACK_SMALL_MODEL:-opencode/gpt-5-nano}
       - GH_TOKEN=${GH_TOKEN}
       - SSH_BOOTSTRAP=${SSH_BOOTSTRAP:-true}
       - SSH_SOURCE_DIR=${SSH_SOURCE_DIR:-/home/opencode/.ssh-host}

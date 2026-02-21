@@ -11,7 +11,7 @@
 
 - OpenCode + Z.AI 모델 설정 (`config/opencode.json`)
 - MCP 서버:
-  - Playwright (headless Chrome)
+  - Playwright (headless Chromium)
   - GitHub MCP (`gh mcp-server`)
 - 플러그인:
   - `oh-my-opencode`

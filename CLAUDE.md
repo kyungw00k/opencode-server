@@ -18,7 +18,7 @@ The stack is a single container based on Ubuntu with:
 - **Z.AI Provider** - GLM models via Z.AI API (configured in `opencode.json`)
 - **OpenSpec** - Spec-driven development (SDD) framework for AI coding
 - **OCX CLI** - OpenCode extension manager (registry + component install)
-- **MCP servers** - Browser control (Playwright, headless Google Chrome) and GitHub CLI integration
+- **MCP servers** - Browser control (Playwright, headless Chromium) and GitHub CLI integration
 - **Runtimes** - Go, Rust, Python 3, Bun, Node.js, Kotlin pre-installed
 
 ## Key Configuration Files (inside container)
