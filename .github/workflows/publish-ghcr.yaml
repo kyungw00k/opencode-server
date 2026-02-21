@@ -6,6 +6,12 @@ on:
       - main
     tags:
       - "v*"
+    paths:
+      - Dockerfile
+      - entrypoint.sh
+      - config/**
+      - .github/workflows/publish-ghcr.yaml
+      - .dockerignore
   workflow_dispatch:
 
 permissions:

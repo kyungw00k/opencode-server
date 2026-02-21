@@ -1,8 +1,6 @@
 services:
   opencode:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/kyungw00k/opencode-server:latest
     container_name: opencode-server
     restart: unless-stopped
     tty: true

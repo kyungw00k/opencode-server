@@ -5,7 +5,7 @@
 핵심 목표:
 - OpenCode 서버를 일관된 컨테이너 환경으로 실행
 - AI provider(Z.AI), MCP, 플러그인, 개발 런타임을 한 번에 구성
-- `docker compose` 빌드 방식과 GHCR 이미지 배포 방식을 모두 지원
+- `docker compose` 이미지 실행과 GHCR 이미지 publish를 지원
 
 ## What It Includes
 
@@ -30,8 +30,7 @@
 ## Repository Layout
 
 - `Dockerfile`: 런타임 및 도구 설치
-- `docker-compose.yaml`: 소스 기준 빌드/실행
-- `docker-compose.image.yaml`: 사전 빌드 이미지(`image:`) 실행
+- `docker-compose.yaml`: GHCR 이미지 기반 실행
 - `config/opencode.json`: OpenCode provider/MCP/plugin 설정
 - `entrypoint.sh`: 부트스트랩 로직
 - `.github/workflows/publish-ghcr.yaml`: GHCR 이미지 publish
@@ -42,16 +41,11 @@
 - Docker / Docker Compose
 - `.env`에 API 토큰과 볼륨 경로 설정
 
-실행 방법 1: 로컬에서 빌드
+실행 방법:
 
 ```bash
-docker compose up -d --build
-```
-
-실행 방법 2: 이미지로 실행
-
-```bash
-docker compose -f docker-compose.image.yaml up -d
+docker compose pull
+docker compose up -d
 ```
 
 ## Always-On 운영 포인트
@@ -62,7 +56,7 @@ docker compose -f docker-compose.image.yaml up -d
 
 ## GHCR Publish
 
-`main` 브랜치 push, `v*` 태그 push, 또는 수동 실행 시 GitHub Actions가 이미지를 GHCR로 push합니다.
+빌드 관련 파일이 변경된 `main` 브랜치 push, `v*` 태그 push, 또는 수동 실행 시 GitHub Actions가 이미지를 GHCR로 push합니다.
 
 - 워크플로: `.github/workflows/publish-ghcr.yaml`
 - 기본 이미지명: `opencode-server`

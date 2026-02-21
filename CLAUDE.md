@@ -9,7 +9,6 @@ This repository sets up a self-hosted OpenCode server on a Synology DS918+ NAS u
 ## Final Outputs
 
 - `docker-compose.yaml` - Main container definition for Synology Container Manager
-- `docker-compose.image.yaml` - Image-only deployment definition for Synology (GHCR)
 - `.env` - Environment variables (credentials, paths, ports)
 
 ## Architecture
@@ -76,13 +75,9 @@ The stack is a single container based on Ubuntu with:
 ## GHCR Publish Workflow
 
 - GitHub Actions workflow: `.github/workflows/publish-ghcr.yaml`
-- Trigger: push to `main`, tag push (`v*`), or manual `workflow_dispatch`
+- Trigger: build-related file changes on `main`, tag push (`v*`), or manual `workflow_dispatch`
 - Push target: `ghcr.io/<owner>/<image>` (default image name `opencode-server`, override via repository variable `GHCR_IMAGE_NAME`)
 - Build platform: `linux/amd64` (compatible with DS918+)
-
-For Synology image-only deploy, use `docker-compose.image.yaml` and set:
-- `OPENCODE_IMAGE` (e.g. `ghcr.io/kyungw00k/opencode-server`)
-- `OPENCODE_IMAGE_TAG` (e.g. `latest` or a specific sha/tag)
 
 ## Plugins
 
@@ -134,8 +129,6 @@ All secrets live in `.env` (never committed). Key variables:
 | `OCX_REGISTRY_URL` | OCX registry URL (default: `https://registry.kdco.dev`) |
 | `OCX_REGISTRY_NAME` | OCX registry alias (default: `kdco`) |
 | `OCX_BACKGROUND_COMPONENT` | Component installed on boot (default: `kdco/background-agents`) |
-| `OPENCODE_IMAGE` | Image repository used by `docker-compose.image.yaml` |
-| `OPENCODE_IMAGE_TAG` | Image tag used by `docker-compose.image.yaml` (default: `latest`) |
 
 ## First Run Setup
 
