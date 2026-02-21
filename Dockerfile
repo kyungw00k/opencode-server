@@ -47,8 +47,22 @@ RUN ARCH="$(dpkg --print-architecture)" \
      fi
 
 # ── Non-root user ─────────────────────────────────────────────────────────────
-RUN useradd -m -u 1000 -s /bin/bash opencode \
-  && echo "opencode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Some base images already contain UID 1000. Reuse/rename it to keep stable UID.
+RUN set -eux; \
+    if id -u opencode >/dev/null 2>&1; then \
+      usermod -s /bin/bash opencode; \
+    elif getent passwd 1000 >/dev/null 2>&1; then \
+      existing_user="$(getent passwd 1000 | cut -d: -f1)"; \
+      usermod -l opencode -d /home/opencode -m "${existing_user}"; \
+      if getent group "${existing_user}" >/dev/null 2>&1; then \
+        groupmod -n opencode "${existing_user}"; \
+      fi; \
+    else \
+      useradd -m -u 1000 -s /bin/bash opencode; \
+    fi; \
+    usermod -aG sudo opencode; \
+    echo "opencode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/opencode; \
+    chmod 0440 /etc/sudoers.d/opencode
 
 USER opencode
 WORKDIR /home/opencode
