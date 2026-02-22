@@ -3,6 +3,7 @@
 
 # OpenCode runtime data (auth tokens, sessions)
 data/
+.tmp/
 
 # Build artifacts
 *.tar.gz
