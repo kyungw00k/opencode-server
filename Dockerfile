@@ -114,6 +114,10 @@ RUN . "${NVM_DIR}/nvm.sh" \
 RUN . "${NVM_DIR}/nvm.sh" \
   && npm install -g ocx@latest
 
+# Preconfigure global OCX registry at build time.
+RUN . "${NVM_DIR}/nvm.sh" \
+  && ocx registry add "https://registry.kdco.dev" --name "kdco" --global --force >/dev/null 2>&1 || true
+
 # ── OpenCode config ───────────────────────────────────────────────────────────
 # Template is stored separately; entrypoint.sh copies it to the mounted config
 # volume on first start if opencode.json doesn't exist yet.

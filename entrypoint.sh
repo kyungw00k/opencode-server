@@ -128,20 +128,18 @@ bootstrap_ocx() {
     return
   fi
 
+  if ! ocx --version >/dev/null 2>&1; then
+    echo "[entrypoint] Warning: ocx CLI exists but is not executable on this CPU, skipping OCX bootstrap."
+    return
+  fi
+
   if [ ! -d "/workspace" ] || [ ! -w "/workspace" ]; then
     echo "[entrypoint] /workspace is not writable, skipping OCX bootstrap."
     return
   fi
 
-  local registry_url="${OCX_REGISTRY_URL:-https://registry.kdco.dev}"
-  local registry_name="${OCX_REGISTRY_NAME:-kdco}"
   local background_component="${OCX_BACKGROUND_COMPONENT:-kdco/background-agents}"
   local plugin_dir="/workspace/.opencode/plugin"
-
-  # Safe to retry on every boot; ocx handles idempotent updates with --force.
-  if ! ocx registry add "${registry_url}" --name "${registry_name}" --global --force >/dev/null 2>&1; then
-    echo "[entrypoint] Warning: failed to add OCX registry (${registry_name})."
-  fi
 
   if [ ! -f "/workspace/.opencode/ocx.jsonc" ]; then
     if ! ocx init -f --cwd /workspace >/dev/null 2>&1; then
