@@ -165,4 +165,8 @@ bootstrap_model_by_env
 bootstrap_ssh
 bootstrap_ocx
 
+if [ "$#" -eq 0 ]; then
+  set -- opencode serve
+fi
+
 exec "$@"

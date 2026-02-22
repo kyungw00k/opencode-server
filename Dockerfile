@@ -131,4 +131,4 @@ RUN chmod +x /home/opencode/entrypoint.sh
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 EXPOSE 3000
 ENTRYPOINT ["/home/opencode/entrypoint.sh"]
-CMD ["opencode", "--verbose"]
+CMD ["opencode", "serve"]
